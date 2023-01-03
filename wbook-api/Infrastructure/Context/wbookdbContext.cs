@@ -17,10 +17,12 @@ namespace Infrastructure.Context
         {
         }
 
+        public virtual DbSet<BasketItem> BasketItems { get; set; } = null!;
         public virtual DbSet<Bundle> Bundles { get; set; } = null!;
         public virtual DbSet<Game> Games { get; set; } = null!;
         public virtual DbSet<GameVariant> GameVariants { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
+        public virtual DbSet<WishlistItem> WishlistItems { get; set; } = null!;
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -33,6 +35,35 @@ namespace Infrastructure.Context
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<BasketItem>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("BasketItem");
+
+                entity.Property(e => e.IdBundle).HasColumnName("idBundle");
+
+                entity.Property(e => e.IdUser).HasColumnName("idUser");
+
+                entity.Property(e => e.IdVariant).HasColumnName("idVariant");
+
+                entity.HasOne(d => d.IdBundleNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdBundle)
+                    .HasConstraintName("FK_BasketItem_Bundle");
+
+                entity.HasOne(d => d.IdUserNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdUser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_BasketItem_User");
+
+                entity.HasOne(d => d.IdVariantNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdVariant)
+                    .HasConstraintName("FK_BasketItem_GameVariant");
+            });
+
             modelBuilder.Entity<Bundle>(entity =>
             {
                 entity.ToTable("Bundle");
@@ -222,6 +253,29 @@ namespace Infrastructure.Context
                     .HasMaxLength(25)
                     .IsUnicode(false)
                     .HasColumnName("type");
+            });
+
+            modelBuilder.Entity<WishlistItem>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("WishlistItem");
+
+                entity.Property(e => e.IdUser).HasColumnName("idUser");
+
+                entity.Property(e => e.IdVariant).HasColumnName("idVariant");
+
+                entity.HasOne(d => d.IdUserNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdUser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WishlistItem_GameVariant");
+
+                entity.HasOne(d => d.IdUser1)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdUser)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_WishlistItem_User");
             });
 
             OnModelCreatingPartial(modelBuilder);

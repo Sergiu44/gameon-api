@@ -23,6 +23,13 @@ namespace Infrastructure
         private IRepository<User> users;
         public IRepository<User> Users => users ?? (users = new BaseRepository<User>(Context));
 
+        public IRepository<Game> games;
+        public IRepository<Game> Games => games ?? (games = new BaseRepository<Game>(Context));
+        public IRepository<GameVariant> gameVariants;
+        public IRepository<GameVariant> GameVariants => gameVariants ?? (gameVariants = new BaseRepository<GameVariant>(Context));
+        public IRepository<Bundle> bundles;
+        public IRepository<Bundle> Bundles => bundles ?? (bundles = new BaseRepository<Bundle>(Context));
+
         public void SaveChanges()
         {
             Context.SaveChanges();

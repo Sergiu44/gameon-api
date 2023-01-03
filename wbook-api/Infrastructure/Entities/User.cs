@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Infrastructure.Entities
 {
-    public partial class User : IEntity
+    public partial class User
     {
         public int Id { get; set; }
         public string FirstName { get; set; } = null!;

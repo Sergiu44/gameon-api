@@ -1,3 +1,4 @@
+using AutoMapper;
 using Infrastructure;
 using Infrastructure.Context;
 using Microsoft.EntityFrameworkCore;
@@ -14,9 +15,12 @@ builder.Services.AddDbContext<wbookdbContext>(options =>
     options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection"));
 });
 
+builder.Services.AddAutoMapper(typeof(Program).Assembly, typeof(BaseService).Assembly);
+
 builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<BaseService>();
 builder.Services.AddScoped<UserService>();
+builder.Services.AddScoped<GameService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();
