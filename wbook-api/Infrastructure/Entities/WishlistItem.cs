@@ -5,12 +5,12 @@ namespace Infrastructure.Entities
 {
     public partial class WishlistItem
     {
-        public int IdUser { get; set; }
-        public int? IdVariant { get; set; }
-        public int? IdBundle { get; set; }
+        public Guid IdUser { get; set; }
+        public Guid? IdVariant { get; set; }
+        public Guid? IdBundle { get; set; }
 
-        public virtual Bundle? IdBundleNavigation { get; set; }
-        public virtual User IdUserNavigation { get; set; } = null!;
-        public virtual GameVariant? IdVariantNavigation { get; set; }
+        public virtual Bundle? BundleNavigation { get; set; }
+        public virtual User UserNavigation { get; set; } = null!;
+        public virtual GameVariant? VariantNavigation { get; set; }
     }
 }

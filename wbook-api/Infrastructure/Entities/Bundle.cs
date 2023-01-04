@@ -5,7 +5,7 @@ namespace Infrastructure.Entities
 {
     public partial class Bundle
     {
-        public int Id { get; set; }
+        public Guid Id { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int Price { get; set; }

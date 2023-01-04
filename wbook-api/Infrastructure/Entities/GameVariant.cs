@@ -10,8 +10,8 @@ namespace Infrastructure.Entities
             Games = new HashSet<Game>();
         }
 
-        public int Id { get; set; }
-        public int GameId { get; set; }
+        public Guid Id { get; set; }
+        public Guid GameId { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int Price { get; set; }
