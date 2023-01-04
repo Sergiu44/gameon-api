@@ -19,6 +19,7 @@ namespace Infrastructure.Context
 
         public virtual DbSet<BasketItem> BasketItems { get; set; } = null!;
         public virtual DbSet<Bundle> Bundles { get; set; } = null!;
+        public virtual DbSet<BundleGameMapping> BundleGameMappings { get; set; } = null!;
         public virtual DbSet<Game> Games { get; set; } = null!;
         public virtual DbSet<GameVariant> GameVariants { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -98,6 +99,29 @@ namespace Infrastructure.Context
                     .HasColumnName("title");
             });
 
+            modelBuilder.Entity<BundleGameMapping>(entity =>
+            {
+                entity.HasNoKey();
+
+                entity.ToTable("BundleGameMapping");
+
+                entity.Property(e => e.IdBundle).HasColumnName("idBundle");
+
+                entity.Property(e => e.IdGame).HasColumnName("idGame");
+
+                entity.Property(e => e.IdVariant).HasColumnName("idVariant");
+
+                entity.HasOne(d => d.IdGameNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdGame)
+                    .HasConstraintName("FK_BundleGameMapping_Game");
+
+                entity.HasOne(d => d.IdVariantNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdVariant)
+                    .HasConstraintName("FK_BundleGameMapping_GameVariant");
+            });
+
             modelBuilder.Entity<Game>(entity =>
             {
                 entity.ToTable("Game");
@@ -136,6 +160,12 @@ namespace Infrastructure.Context
                     .HasColumnName("title");
 
                 entity.Property(e => e.Url).HasColumnName("url");
+
+                entity.HasOne(d => d.CheapestVariant)
+                    .WithMany(p => p.Games)
+                    .HasForeignKey(d => d.CheapestVariantId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Game_GameVariant");
             });
 
             modelBuilder.Entity<GameVariant>(entity =>
@@ -169,8 +199,6 @@ namespace Infrastructure.Context
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("title");
-
-                entity.Property(e => e.Url).HasColumnName("url");
 
                 entity.HasOne(d => d.Game)
                     .WithMany(p => p.GameVariants)
@@ -261,21 +289,27 @@ namespace Infrastructure.Context
 
                 entity.ToTable("WishlistItem");
 
+                entity.Property(e => e.IdBundle).HasColumnName("idBundle");
+
                 entity.Property(e => e.IdUser).HasColumnName("idUser");
 
                 entity.Property(e => e.IdVariant).HasColumnName("idVariant");
+
+                entity.HasOne(d => d.IdBundleNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdBundle)
+                    .HasConstraintName("FK_WishlistItem_Bundle");
 
                 entity.HasOne(d => d.IdUserNavigation)
                     .WithMany()
                     .HasForeignKey(d => d.IdUser)
                     .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_WishlistItem_GameVariant");
-
-                entity.HasOne(d => d.IdUser1)
-                    .WithMany()
-                    .HasForeignKey(d => d.IdUser)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_WishlistItem_User");
+
+                entity.HasOne(d => d.IdVariantNavigation)
+                    .WithMany()
+                    .HasForeignKey(d => d.IdVariant)
+                    .HasConstraintName("FK_WishlistItem_GameVariant");
             });
 
             OnModelCreatingPartial(modelBuilder);

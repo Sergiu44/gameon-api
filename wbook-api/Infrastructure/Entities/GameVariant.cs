@@ -5,6 +5,11 @@ namespace Infrastructure.Entities
 {
     public partial class GameVariant
     {
+        public GameVariant()
+        {
+            Games = new HashSet<Game>();
+        }
+
         public int Id { get; set; }
         public int GameId { get; set; }
         public string Title { get; set; } = null!;
@@ -13,9 +18,9 @@ namespace Infrastructure.Entities
         public int? Rrp { get; set; }
         public string Image { get; set; } = null!;
         public string? HoverImage { get; set; }
-        public string Url { get; set; } = null!;
         public DateTime CreatedAt { get; set; }
 
         public virtual Game Game { get; set; } = null!;
+        public virtual ICollection<Game> Games { get; set; }
     }
 }

@@ -15,7 +15,7 @@ namespace Services
     {
         private GameService(UnitOfWork unitOfWork): base(unitOfWork) { }
 
-        public async Task<List<GameItemModel>> GetGames()
+       /* public async Task<List<GameItemModel>> GetGames()
         {
             var gamesList = new List<GameItemModel>();
             var listOfGames = await _unitOfWork.Games.Get().OrderBy(e => e.CreatedAt).ToListAsync();
@@ -43,10 +43,10 @@ namespace Services
             }
 
             return gamesList;
-        }
+        }*/
 
 
-        public GameModel GetGameById(Guid gameId)
+       /* public GameModel GetGameById(Guid gameId)
         {
             var game = _unitOfWork.Games.Get().FirstOrDefault(g => g.Id == gameId);
             if(game == null)
@@ -57,9 +57,9 @@ namespace Services
             var variants = _unitOfWork.GameVariants.Get().FirstOrDefault(v => v.GameId == game.Id);
             var gameModel = AutoMapper.Mapper.Map<Game, GameModel>(game);
             return gameModel;
-        }
+        }*/
 
-        public void AddGame(GamePostModel game)
+       /* public void AddGame(GamePostModel game)
         {
             var gameMap= AutoMapper.Mapper.Map<GamePostModel, Game>(game);
             gameMap.Title= game.Title;
@@ -67,9 +67,9 @@ namespace Services
             gameMap.GameVariants = new List<GameVariant>();
             _unitOfWork.Games.Insert(gameMap);
             _unitOfWork.SaveChanges();
-        }
+        }*/
 
-        public void EditGame(GamePostModel game)
+       /* public void EditGame(GamePostModel game)
         {
             var gameById = _unitOfWork.Games.Get().FirstOrDefault(g => g.Id == game.Id);
             if(gameById == null)
@@ -95,6 +95,6 @@ namespace Services
             game.GameVariants.Clear();
             _unitOfWork.Games.Delete(game);
             _unitOfWork.SaveChanges();
-        }
+        }*/
     }
 }

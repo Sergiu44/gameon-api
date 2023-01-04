@@ -16,7 +16,7 @@ namespace Services
     {
         public BundleService(UnitOfWork unitOfWork) : base(unitOfWork) { }
 
-        public async Task<List<BundleItemModel>> GetBundles()
+       /* public async Task<List<BundleItemModel>> GetBundles()
         {
             var bundleList = new List<BundleItemModel>();
             var listOfBundles = await _unitOfWork.Bundles.Get().OrderBy(e => e.CreatedAt).ToListAsync();
@@ -94,6 +94,6 @@ namespace Services
             bundle.Products.Clear();
             _unitOfWork.Bundles.Delete(bundle);
             _unitOfWork.SaveChanges();
-        }
+        }*/
     }
 }

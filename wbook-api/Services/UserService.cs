@@ -20,13 +20,13 @@ namespace Services
 
         public async Task<CurrentUserDto> Login(LoginModel model)
         {
-            var user = await _unitOfWork.Users.Get().FirstOrDefaultAsync(user => user.Email == model.Email);
+            /*var user = await _unitOfWork.Users.Get().FirstOrDefaultAsync(user => user.Email == model.Email);
             if (user == null)
             {
                 return new CurrentUserDto { Authenticated = false };
             }
 
-            if(user.Deleted == true)
+            if (user.Deleted == true)
             {
                 return new CurrentUserDto { Disabled = true };
             }
@@ -34,17 +34,17 @@ namespace Services
             if (!user.Password.SequenceEqual(model.Password.HashPassword(user.Salt)))
             {
                 return new CurrentUserDto { Authenticated = false };
-            }
+            }*/
 
             return new CurrentUserDto
             {
-                Id = user.Id,
+               /* Id = user.Id,
                 Email = user.Email,
                 FirstName = user.FirstName,
                 LastName = user.LastName,
                 Authenticated = true,
                 Disabled = user.Deleted || false,
-                Admin = user.IsAdmin
+                Admin = user.IsAdmin*/
             };
         }
 
@@ -54,7 +54,7 @@ namespace Services
 
             var user = new User()
             {
-                Id = Guid.NewGuid(),
+              /*  Id = Guid.NewGuid(),*/
                 Salt = Guid.NewGuid(),
                 Email = model.Email,
                 FirstName = model.FirstName,
@@ -65,7 +65,7 @@ namespace Services
             };
 
             user.Password = model.Password.HashPassword(user.Salt);
-            _unitOfWork.Users.Insert(user);
+            /*_unitOfWork.Users.Insert(user);*/
             _unitOfWork.SaveChanges();
         }
     }

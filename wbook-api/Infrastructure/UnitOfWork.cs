@@ -20,7 +20,7 @@ namespace Infrastructure
             Context = context;
         }
 
-        private IRepository<User> users;
+       /* private IRepository<User> users;
         public IRepository<User> Users => users ?? (users = new BaseRepository<User>(Context));
 
         public IRepository<Game> games;
@@ -28,7 +28,7 @@ namespace Infrastructure
         public IRepository<GameVariant> gameVariants;
         public IRepository<GameVariant> GameVariants => gameVariants ?? (gameVariants = new BaseRepository<GameVariant>(Context));
         public IRepository<Bundle> bundles;
-        public IRepository<Bundle> Bundles => bundles ?? (bundles = new BaseRepository<Bundle>(Context));
+        public IRepository<Bundle> Bundles => bundles ?? (bundles = new BaseRepository<Bundle>(Context));*/
 
         public void SaveChanges()
         {
