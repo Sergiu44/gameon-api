@@ -23,7 +23,7 @@ namespace wbook_api.webapp.Controllers
         }
 
         [HttpPost("register")]
-        public async Task<IActionResult> Register([FromBody]RegisterModel model)
+        public async Task<IActionResult> Register([FromBody] RegisterModel model)
         {
             _userService.RegisterNewUser(model);
 
@@ -31,8 +31,7 @@ namespace wbook_api.webapp.Controllers
             {
                 Password = model.Password,
                 Email = model.Email,
-                AreCredentialsInvalid = false,
-                Disabled = false
+                InvalidCredentials = false,
             });
 
             var token = LogIn(user);
@@ -51,9 +50,9 @@ namespace wbook_api.webapp.Controllers
         {
             var user = await _userService.Login(model);
 
-            if (!user.Authenticated)
+            if (!user.IsAuthenticated)
             {
-                model.AreCredentialsInvalid = true;
+                model.InvalidCredentials = true;
                 return Unauthorized();
             }
 
@@ -77,8 +76,8 @@ namespace wbook_api.webapp.Controllers
                 new Claim("Id", userDto.Id.ToString()),
                 new Claim(ClaimTypes.Name, $"{userDto.LastName}"),
                 new Claim(ClaimTypes.GivenName, $"{userDto.FirstName}"),
-                new Claim(ClaimTypes.Email, userDto.Email),
-                new Claim("Disabled", $"{userDto.Disabled}")
+                new Claim("IsAuthenticated", $"{userDto.IsAuthenticated}"),
+                new Claim("IsAdmin", $"{userDto.IsAdmin}"),
             };
 
             var token = GetToken(claims);

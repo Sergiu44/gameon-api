@@ -3,6 +3,7 @@ using Infrastructure.Common.Exceptions;
 using Infrastructure.Entities;
 using Infrastructure.Models.Bundle;
 using Infrastructure.Models.Game;
+using Infrastructure.Models.GameVariant;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -14,86 +15,83 @@ namespace Services
 {
     public class BundleService: BaseService
     {
-        public BundleService(UnitOfWork unitOfWork) : base(unitOfWork) { }
+        public BundleService(ServiceDependencies serviceDependencies) : base(serviceDependencies) { }
 
-       /* public async Task<List<BundleItemModel>> GetBundles()
+        public async Task<List<BundleModel>> GetBundles()
         {
-            var bundleList = new List<BundleItemModel>();
-            var listOfBundles = await _unitOfWork.Bundles.Get().OrderBy(e => e.CreatedAt).ToListAsync();
+            var bundlesList = new List<BundleModel>();
+            var listOfBundles = await _unitOfWork.Bundles.Get().OrderBy(b => b.CreatedAt).ToListAsync();
 
-            if (listOfBundles == null)
+            if(listOfBundles == null)
             {
-                return bundleList;
+                return bundlesList;
             }
 
-            foreach (var bundle in bundleList)
+            foreach(var bundle in listOfBundles)
             {
-                var gameModel = new BundleItemModel()
+                var bundleModel = new BundleModel()
                 {
                     Id = bundle.Id,
                     Title = bundle.Title,
                     Description = bundle.Description,
-                    Image = bundle.Image,
                     Price = bundle.Price,
-                    Rrp = bundle.Rrp
+                    Rrp = bundle.Rrp ?? bundle.Price,
+                    Image = bundle.Image
                 };
-
-                bundleList.Add(gameModel);
+                bundlesList.Add(bundleModel);
             }
+            return bundlesList;
+        } 
 
-            return bundleList;
-        }
-
-
-        public BundleModel GetBundleById(Guid bundleId)
+        public BundleItemModel GetBundleById(int bundleId)
         {
-            var bundle = _unitOfWork.Bundles.Get().FirstOrDefault(g => g.Id == bundleId);
-            if (bundle == null)
-            {
-                throw new NotFound("Bundle Not Found");
-            }
+            var bundle = _unitOfWork.Bundles.Get().FirstOrDefault(b => b.Id == bundleId);
 
-            var products = _unitOfWork.GameVariants.Get().FirstOrDefault(v => v.GameId == bundle.Id);
-            var bundleModel = AutoMapper.Mapper.Map<Bundle, BundleModel>(bundle);
-            return bundleModel;
-        }
+            var bundleProducts = _unitOfWork.BundleGameMapping.Get().Include(g => g.IdVariantNavigation).Include(g => g.IdGameNavigation).Where(g => g.IdBundle == bundleId);
 
-        public void AddBundle(BundlePostModel bundle)
-        {
-            var bundleMap = AutoMapper.Mapper.Map<BundlePostModel, Bundle>(bundle);
-            bundleMap.Title = bundle.Title;
-            bundleMap.Description = bundle.Description;
-            bundleMap.Products = new List<GameVariant>();
-            _unitOfWork.Bundles.Insert(bundleMap);
-            _unitOfWork.SaveChanges();
-        }
 
-        public void EditBundle(BundlePostModel bundle)
-        {
-            var bundleById = _unitOfWork.Bundles.Get().FirstOrDefault(b => b.Id == b.Id);
-            if (bundleById == null)
-            {
-                throw new NotFound("Bundle not Found");
-            }
-
-            bundleById.Title = bundle.Title;
-            bundleById.Description = bundle.Description;
-
-            _unitOfWork.Bundles.Update(bundleById);
-            _unitOfWork.SaveChanges();
-        }
-
-        public void DeleteBundle(Guid bundleId)
-        {
-            var bundle = _unitOfWork.Bundles.Get().Include(g => g.Products).FirstOrDefault(g => g.Id == bundleId);
-            if (bundle == null)
+            if(bundle == null)
             {
                 throw new NotFound("Bundle not found");
             }
 
-            bundle.Products.Clear();
-            _unitOfWork.Bundles.Delete(bundle);
-            _unitOfWork.SaveChanges();
-        }*/
+            if(bundleProducts == null)
+            {
+                throw new NotFound("There are no products");
+            }
+
+            var bundleItems = new List<Tuple<GameVariantItemModel, GameModel>>();
+
+            foreach(var prod in bundleProducts)
+            {
+                if (prod.IdGame != null)
+                {
+                    var item = AutoMapper.Mapper.Map<Game, GameModel>(prod.IdGameNavigation);
+                    bundleItems.Add(Tuple.Create<GameVariantItemModel, GameModel>(null, item));
+                }
+                else if (prod.IdVariant != null)
+                {
+                    var item = AutoMapper.Mapper.Map<GameVariant, GameVariantItemModel>(prod.IdVariantNavigation);
+                    bundleItems.Add(Tuple.Create<GameVariantItemModel, GameModel>(item, null));
+                }
+            }
+
+            var bundleItemModel = new BundleItemModel()
+            {
+                Id = bundle.Id,
+                Title = bundle.Title,
+                Description = bundle.Description,
+                Price = bundle.Price,
+                Rrp = bundle.Rrp ?? bundle.Price,
+                GameVariants = bundleItems
+            };
+
+            return bundleItemModel;
+        }
+
+        public void CreateBundle(BundlePostModel bundle, List<Tuple<GameVariantItemModel, GameModel>> products)
+        {
+            var bundleMap = AutoMapper.Mapper.Map<BundlePostModel, Bundle>(bundle);
+        }
     }
 }

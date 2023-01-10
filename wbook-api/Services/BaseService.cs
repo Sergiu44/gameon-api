@@ -1,4 +1,5 @@
-﻿using Infrastructure;
+﻿using AutoMapper;
+using Infrastructure;
 
 namespace Services
 {
@@ -6,9 +7,11 @@ namespace Services
     {
 
         protected readonly UnitOfWork _unitOfWork;
-        public BaseService(UnitOfWork unitOfWork)
+        protected readonly IMapper mapper;
+        public BaseService(ServiceDependencies serviceDependencies)
         {
-            _unitOfWork = unitOfWork;
+            _unitOfWork = serviceDependencies.UnitOfWork;
+            mapper = serviceDependencies.Mapper;
         }
     }
 }

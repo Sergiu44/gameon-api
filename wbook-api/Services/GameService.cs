@@ -5,6 +5,7 @@ using Infrastructure.Models.Game;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
+using System.Drawing;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,21 +14,21 @@ namespace Services
 {
     public class GameService: BaseService
     {
-        private GameService(UnitOfWork unitOfWork): base(unitOfWork) { }
+        public GameService(ServiceDependencies serviceDependencies): base(serviceDependencies) { }
 
-       /* public async Task<List<GameItemModel>> GetGames()
+        public async Task<List<GameModel>> GetGames()
         {
-            var gamesList = new List<GameItemModel>();
+            var gamesList = new List<GameModel>();
             var listOfGames = await _unitOfWork.Games.Get().OrderBy(e => e.CreatedAt).ToListAsync();
 
-            if(listOfGames == null)
+            if (listOfGames == null)
             {
                 return gamesList;
             }
 
-            foreach(var game in listOfGames)
+            foreach (var game in listOfGames)
             {
-                var gameModel = new GameItemModel()
+                var gameModel = new GameModel()
                 {
                     Id = game.Id,
                     Title = game.Title,
@@ -43,36 +44,37 @@ namespace Services
             }
 
             return gamesList;
-        }*/
+        }
 
 
-       /* public GameModel GetGameById(Guid gameId)
+        public GameVariantsModel GetGameById(int gameId)
         {
-            var game = _unitOfWork.Games.Get().FirstOrDefault(g => g.Id == gameId);
-            if(game == null)
+            var game = _unitOfWork.Games.Get().Include(game => game.GameVariants).FirstOrDefault(g => g.Id == gameId);
+            if (game == null)
             {
                 throw new NotFound("Game Not Found");
             }
 
-            var variants = _unitOfWork.GameVariants.Get().FirstOrDefault(v => v.GameId == game.Id);
-            var gameModel = AutoMapper.Mapper.Map<Game, GameModel>(game);
+            var gameModel = AutoMapper.Mapper.Map<Game, GameVariantsModel>(game);
             return gameModel;
-        }*/
+        }
 
-       /* public void AddGame(GamePostModel game)
+        public void AddGame(GamePostModel game)
         {
-            var gameMap= AutoMapper.Mapper.Map<GamePostModel, Game>(game);
-            gameMap.Title= game.Title;
-            gameMap.Description= game.Description;
+            /*var image = new Image();*/
+
+            var gameMap = AutoMapper.Mapper.Map<GamePostModel, Game>(game);
+            gameMap.Title = game.Title;
+            gameMap.Description = game.Description;
             gameMap.GameVariants = new List<GameVariant>();
             _unitOfWork.Games.Insert(gameMap);
             _unitOfWork.SaveChanges();
-        }*/
+        }
 
-       /* public void EditGame(GamePostModel game)
+        public void EditGame(GamePostModel game)
         {
             var gameById = _unitOfWork.Games.Get().FirstOrDefault(g => g.Id == game.Id);
-            if(gameById == null)
+            if (gameById == null)
             {
                 throw new NotFound("Game not Found");
             }
@@ -84,10 +86,10 @@ namespace Services
             _unitOfWork.SaveChanges();
         }
 
-        public void DeleteGame(Guid gameId)
+        public void DeleteGame(int gameId)
         {
             var game = _unitOfWork.Games.Get().Include(g => g.GameVariants).FirstOrDefault(g => g.Id == gameId);
-            if(game == null)
+            if (game == null)
             {
                 throw new NotFound("Game not found");
             }
@@ -95,6 +97,6 @@ namespace Services
             game.GameVariants.Clear();
             _unitOfWork.Games.Delete(game);
             _unitOfWork.SaveChanges();
-        }*/
+        }
     }
 }
