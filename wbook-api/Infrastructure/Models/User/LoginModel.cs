@@ -10,7 +10,6 @@ namespace Infrastructure.Models.User
     {
         public string Email { get; set; }
         public string Password { get; set; }
-        public bool AreCredentialsInvalid { get; set; }
-        public bool Disabled { get; set; }
+        public bool InvalidCredentials { get; set; }
     }
 }

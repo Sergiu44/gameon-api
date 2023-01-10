@@ -9,11 +9,13 @@ namespace Infrastructure.Models.Game
 {
     public class GamePostModel
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public List<GameVariantPostModel> GameVariants { get; set; }
         public string? Image { get; set; }
         public string? HoverImage{ get; set; }
+        public int Price { get; set; }
+        public int Rrp { get; set; }
+        public string Type { get; set; }
     }
 }
