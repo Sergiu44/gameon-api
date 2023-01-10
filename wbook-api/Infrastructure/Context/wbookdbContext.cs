@@ -159,8 +159,6 @@ namespace Infrastructure.Context
                     .IsUnicode(false)
                     .HasColumnName("title");
 
-                entity.Property(e => e.Url).HasColumnName("url");
-
                 entity.HasOne(d => d.CheapestVariant)
                     .WithMany(p => p.Games)
                     .HasForeignKey(d => d.CheapestVariantId)
@@ -255,6 +253,8 @@ namespace Infrastructure.Context
                     .HasColumnName("first_name");
 
                 entity.Property(e => e.IsAdmin).HasColumnName("isAdmin");
+
+                entity.Property(e => e.IsDeleted).HasColumnName("isDeleted");
 
                 entity.Property(e => e.LastName)
                     .HasMaxLength(25)

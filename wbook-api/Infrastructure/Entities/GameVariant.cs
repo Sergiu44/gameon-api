@@ -3,15 +3,15 @@ using System.Collections.Generic;
 
 namespace Infrastructure.Entities
 {
-    public partial class GameVariant
+    public partial class GameVariant : IEntity
     {
         public GameVariant()
         {
             Games = new HashSet<Game>();
         }
 
-        public Guid Id { get; set; }
-        public Guid GameId { get; set; }
+        public int Id { get; set; }
+        public int GameId { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int Price { get; set; }

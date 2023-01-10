@@ -3,9 +3,9 @@ using System.Collections.Generic;
 
 namespace Infrastructure.Entities
 {
-    public partial class Bundle
+    public partial class Bundle : IEntity
     {
-        public Guid Id { get; set; }
+        public int Id { get; set; }
         public string Title { get; set; } = null!;
         public string Description { get; set; } = null!;
         public int Price { get; set; }

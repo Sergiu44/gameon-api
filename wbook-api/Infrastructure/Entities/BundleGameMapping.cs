@@ -3,13 +3,13 @@ using System.Collections.Generic;
 
 namespace Infrastructure.Entities
 {
-    public partial class BundleGameMapping
+    public partial class BundleGameMapping : IEntity
     {
-        public Guid IdBundle { get; set; }
-        public Guid? IdGame { get; set; }
-        public Guid? IdVariant { get; set; }
+        public int IdBundle { get; set; }
+        public int? IdGame { get; set; }
+        public int? IdVariant { get; set; }
 
-        public virtual Game? GameNavigation { get; set; }
-        public virtual GameVariant? VariantNavigation { get; set; }
+        public virtual Game? IdGameNavigation { get; set; }
+        public virtual GameVariant? IdVariantNavigation { get; set; }
     }
 }
