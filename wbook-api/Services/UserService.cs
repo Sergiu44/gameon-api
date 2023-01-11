@@ -18,20 +18,20 @@ namespace Services
         {
         }
 
-        public async Task<CurrentUserDto> Login(LoginModel model)
+        public async Task<UserModel> Login(LoginModel model)
         {
             var user = await _unitOfWork.Users.Get().FirstOrDefaultAsync(user => user.Email == model.Email);
             if (user == null)
             {
-                return new CurrentUserDto { IsAuthenticated = false };
+                return new UserModel { IsAuthenticated = false };
             }
 
             if (!user.Password.SequenceEqual(model.Password.HashPassword(user.Salt)))
             {
-                return new CurrentUserDto { IsAuthenticated = false };
+                return new UserModel { IsAuthenticated = false };
             }
 
-            return new CurrentUserDto
+            return new UserModel
             {
                 Id = user.Id,
                 FirstName = user.FirstName,

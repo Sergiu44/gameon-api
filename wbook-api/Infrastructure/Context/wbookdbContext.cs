@@ -135,8 +135,6 @@ namespace Infrastructure.Context
                     .IsUnicode(false)
                     .HasColumnName("category");
 
-                entity.Property(e => e.CheapestVariantId).HasColumnName("cheapestVariantId");
-
                 entity.Property(e => e.CreatedAt)
                     .HasColumnName("created_at")
                     .HasDefaultValueSql("(sysdatetime())");
@@ -158,12 +156,6 @@ namespace Infrastructure.Context
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("title");
-
-                entity.HasOne(d => d.CheapestVariant)
-                    .WithMany(p => p.Games)
-                    .HasForeignKey(d => d.CheapestVariantId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_Game_GameVariant");
             });
 
             modelBuilder.Entity<GameVariant>(entity =>

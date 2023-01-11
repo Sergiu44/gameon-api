@@ -59,16 +59,24 @@ namespace Services
             return gameModel;
         }
 
-        public void AddGame(GamePostModel game)
+        public async Task AddGame(GamePostModel game)
         {
-            /*var image = new Image();*/
-
-            var gameMap = AutoMapper.Mapper.Map<GamePostModel, Game>(game);
-            gameMap.Title = game.Title;
-            gameMap.Description = game.Description;
-            gameMap.GameVariants = new List<GameVariant>();
-            _unitOfWork.Games.Insert(gameMap);
-            _unitOfWork.SaveChanges();
+            await ExecuteInTransaction(async uow =>
+            {
+                var newGame = new Game();
+                newGame.Id = game.Id;
+                newGame.Title = game.Title;
+                newGame.Description = game.Description;
+                newGame.Image = game.Image;
+                newGame.HoverImage = game.HoverImage;
+                newGame.Price = game.Price;
+                newGame.Rrp = game.Rrp;
+                newGame.CreatedAt = DateTime.Now;
+                newGame.Category = game.Type;
+                uow.Games.Insert(newGame);
+                uow.SaveChanges();
+            });
+            
         }
 
         public void EditGame(GamePostModel game)
@@ -94,7 +102,6 @@ namespace Services
                 throw new NotFound("Game not found");
             }
 
-            game.GameVariants.Clear();
             _unitOfWork.Games.Delete(game);
             _unitOfWork.SaveChanges();
         }

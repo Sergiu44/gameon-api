@@ -17,8 +17,10 @@ namespace wbook_api.webapp.Controllers
         }
 
         [HttpGet("get")]
-        public async Task<IActionResult> GetBasket([FromBody] int userId)
+        [Authorize]
+        public async Task<IActionResult> GetBasket()
         {
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
             var basketItems = await _basketService.GetVariantsForBasket(userId);
             return Ok(basketItems);
         }

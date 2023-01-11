@@ -26,6 +26,7 @@ builder.Services.AddScoped<UnitOfWork>();
 builder.Services.AddScoped<ServiceDependencies>();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GameService>();
+builder.Services.AddScoped<GameVariantService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

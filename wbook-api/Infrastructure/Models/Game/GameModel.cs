@@ -13,7 +13,7 @@ namespace Infrastructure.Models.Game
         public string Description { get; set; }
         public string Image { get; set; }
         public string? HoverImage { get; set; }
-        public int Price { get; set; }
-        public int Rrp { get; set; }
+        public double Price { get; set; }
+        public double Rrp { get; set; }
     }
 }

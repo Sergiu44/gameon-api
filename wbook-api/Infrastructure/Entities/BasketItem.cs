@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace Infrastructure.Entities
 {
-    public partial class BasketItem: IEntity
+    public partial class BasketItem : IEntity
     {
         public int IdUser { get; set; }
         public int? IdVariant { get; set; }

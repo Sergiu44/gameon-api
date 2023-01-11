@@ -1,13 +1,12 @@
-﻿using Infrastructure.Entities;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Common.DTOs
+namespace Infrastructure.Models.User
 {
-    public class CurrentUserDto
+    public class UserModel
     {
         public int Id { get; set; }
         public string FirstName { get; set; }

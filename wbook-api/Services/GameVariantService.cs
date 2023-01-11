@@ -15,6 +15,10 @@ namespace Services
     public class GameVariantService: BaseService
     {
         public GameVariantService(ServiceDependencies serviceDependencies) : base(serviceDependencies) { }
+        public int createGameVariantId()
+        {
+            return _unitOfWork.GameVariants.Get().ToList().Count + 1;
+        }
 
         public async Task<List<GameVariantItemModel>> GetGameVariants(int gameId)
         {
@@ -45,18 +49,26 @@ namespace Services
             return variantsList;
         }
 
-        public void AddVariant(GameVariantPostModel variantPostModel, int gameId)
+        public void AddVariant(GameVariantPostModel variantPostModel)
         {
-            var variantMap = AutoMapper.Mapper.Map<GameVariantPostModel, GameVariant>(variantPostModel);
+            // create manual mapper from variantPostModel to GameVariant
+            var newVariant = new GameVariant();
+            var variantMap = mapper.Map<GameVariantPostModel, GameVariant>(variantPostModel);
             variantMap.CreatedAt = DateTime.UtcNow;
-            variantMap.GameId = gameId;
+            variantMap.Id = createGameVariantId();
+            using (var ms = new MemoryStream())
+            {
+                variantPostModel.Image.CopyTo(ms);
+                var fileBytes = ms.ToArray();
+                variantMap.Image = fileBytes.ToString();
+            }
             _unitOfWork.GameVariants.Insert(variantMap);
             _unitOfWork.SaveChanges();
         }
 
         public void EditVariant(GameVariantPostModel variant)
         {
-            var variantById = _unitOfWork.GameVariants.Get().FirstOrDefault(g => g.Id == variant.Id);
+            /*var variantById = _unitOfWork.GameVariants.Get().FirstOrDefault(g => g.Id == variant.Id);
             if (variantById == null)
             {
                 throw new NotFound("Variant not Found");
@@ -66,12 +78,12 @@ namespace Services
             variantById.Description = variant.Description;
             variantById.CreatedAt = DateTime.UtcNow;
             variantById.Price = variant.Price;
-            variantById.Rrp = variant.Rrp;
-            variantById.Image = variant.Image ?? "";
-            variantById.HoverImage = variant.HoverImage;
+            variantById.Rrp = variant.Rrp;*/
+            //variantById.Image = variant.Image ?? "";
+            //variantById.HoverImage = variant.HoverImage;
 
-            _unitOfWork.GameVariants.Update(variantById);
-            _unitOfWork.SaveChanges();
+          /*  _unitOfWork.GameVariants.Update(variantById);
+            _unitOfWork.SaveChanges();*/
         }
 
         public void DeleteVariant(int variantId)

@@ -1,8 +1,8 @@
 ﻿using Infrastructure.Common.Base;
 using Infrastructure.Models.Game;
-using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
+using wbook_api.WebApp.Code.Utils;
 
 namespace wbook_api.webapp.Controllers
 {
@@ -17,6 +17,7 @@ namespace wbook_api.webapp.Controllers
         }
 
         [HttpGet("get")]
+        [Authorize]
         public async Task<IActionResult> GetGames()
         {
             var games = await _gameService.GetGames();
@@ -24,7 +25,6 @@ namespace wbook_api.webapp.Controllers
         }
 
         [HttpGet("getById")]
-        [Authorize]
         public IActionResult GetGameById(int id)
         {
             var game = _gameService.GetGameById(id);
@@ -39,9 +39,8 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
-        [HttpDelete("delete")]
-        [Authorize]
-        public IActionResult DeleteGame([FromBody] int gameId)
+        [HttpDelete("delete/{gameId}")]
+        public IActionResult DeleteGame([FromRoute] int gameId)
         {
             _gameService.DeleteGame(gameId);
             return Ok();
