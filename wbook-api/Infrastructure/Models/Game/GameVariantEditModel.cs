@@ -5,18 +5,15 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Models.GameVariant
+namespace Infrastructure.Models.Game
 {
-    public class GameVariantItemModel
+    public class GameVariantEditModel
     {
-        public int Id { get; set; }
-        public int GameId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public double Price { get; set; }
+        public double? Price { get; set; }
         public double? Rrp { get; set; }
-        public string Image { get; set; }
-        public string? HoverImage { get; set; }
-
+        public IFormFile? Image { get; set; }
+        public IFormFile? HoverImage { get; set; }
     }
 }

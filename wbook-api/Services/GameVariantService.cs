@@ -3,6 +3,7 @@ using Infrastructure.Common.Exceptions;
 using Infrastructure.Entities;
 using Infrastructure.Models.Game;
 using Infrastructure.Models.GameVariant;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
@@ -20,55 +21,43 @@ namespace Services
             return _unitOfWork.GameVariants.Get().ToList().Count + 1;
         }
 
-        public async Task<List<GameVariantItemModel>> GetGameVariants(int gameId)
-        {
-            var variantsList = new List<GameVariantItemModel>();
-            var listOfGameVariants = await _unitOfWork.GameVariants.Get().Where(gv => gv.GameId == gameId).ToListAsync();
-
-            if (listOfGameVariants == null)
-            {
-                return variantsList;
-            }
-
-            foreach (var variant in listOfGameVariants)
-            {
-                var variantModel = new GameVariantItemModel()
-                {
-                    GameId = gameId,
-                    Id = variant.Id,
-                    Title = variant.Title,
-                    Description = variant.Description,
-                    Price = variant.Price,
-                    Rrp = variant.Rrp ?? variant.Price,
-                    Image = variant.Image,
-                    HoverImage = variant.HoverImage
-                };
-                variantsList.Add(variantModel);
-            }
-
-            return variantsList;
-        }
-
         public void AddVariant(GameVariantPostModel variantPostModel)
         {
-            // create manual mapper from variantPostModel to GameVariant
             var newVariant = new GameVariant();
-            var variantMap = mapper.Map<GameVariantPostModel, GameVariant>(variantPostModel);
-            variantMap.CreatedAt = DateTime.UtcNow;
-            variantMap.Id = createGameVariantId();
+            var findGameById = _unitOfWork.Games.Get().FirstOrDefault(g => g.Id == variantPostModel.GameId);
+            if(findGameById == null)
+            {
+                throw new NotFound("The game with the given id doesn't exist");
+            }
+            newVariant.GameId = variantPostModel.GameId;
+            newVariant.Title = variantPostModel.Title;
+            newVariant.Description = variantPostModel.Description;
+            newVariant.Price = variantPostModel.Price;
+            newVariant.Rrp = variantPostModel.Rrp;
+            newVariant.CreatedAt = DateTime.UtcNow;
+            newVariant.Id = createGameVariantId();
+            if (variantPostModel.HoverImage != null)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    variantPostModel.HoverImage.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    newVariant.HoverImage = fileBytes.ToString();
+                }
+            }
             using (var ms = new MemoryStream())
             {
                 variantPostModel.Image.CopyTo(ms);
                 var fileBytes = ms.ToArray();
-                variantMap.Image = fileBytes.ToString();
+                newVariant.Image = fileBytes.ToString() ?? "";
             }
-            _unitOfWork.GameVariants.Insert(variantMap);
+            _unitOfWork.GameVariants.Insert(newVariant);
             _unitOfWork.SaveChanges();
         }
 
-        public void EditVariant(GameVariantPostModel variant)
+        public void EditVariant(GameVariantEditModel variant, int gameVariantId)
         {
-            /*var variantById = _unitOfWork.GameVariants.Get().FirstOrDefault(g => g.Id == variant.Id);
+            var variantById = _unitOfWork.GameVariants.Get().FirstOrDefault(g => g.Id == gameVariantId);
             if (variantById == null)
             {
                 throw new NotFound("Variant not Found");
@@ -77,13 +66,34 @@ namespace Services
             variantById.Title = variant.Title;
             variantById.Description = variant.Description;
             variantById.CreatedAt = DateTime.UtcNow;
-            variantById.Price = variant.Price;
-            variantById.Rrp = variant.Rrp;*/
-            //variantById.Image = variant.Image ?? "";
-            //variantById.HoverImage = variant.HoverImage;
-
-          /*  _unitOfWork.GameVariants.Update(variantById);
-            _unitOfWork.SaveChanges();*/
+            if(variant.Price != null)
+            {
+                variantById.Price = (double)variant.Price;
+            }
+            if(variant.Rrp != null)
+            {
+                variantById.Rrp = variant.Rrp;
+            }
+            if(variant.HoverImage != null)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    variant.HoverImage.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    variantById.HoverImage = fileBytes.ToString();
+                }
+            }
+            if(variant.Image != null)
+            {
+                using (var ms = new MemoryStream())
+                {
+                    variant.Image.CopyTo(ms);
+                    var fileBytes = ms.ToArray();
+                    variantById.Image = fileBytes.ToString() ?? "";
+                }
+            }
+            _unitOfWork.GameVariants.Update(variantById);
+            _unitOfWork.SaveChanges();
         }
 
         public void DeleteVariant(int variantId)
@@ -93,9 +103,25 @@ namespace Services
             {
                 throw new NotFound("Variant not found");
             }
-
             _unitOfWork.GameVariants.Delete(variant);
             _unitOfWork.SaveChanges();
+        }
+
+        public List<byte[]> GetImg(int id)
+        {
+            var gameVariant = _unitOfWork.GameVariants.Get().FirstOrDefault(i => i.Id == id);
+            if (gameVariant == null)
+            {
+                throw new NotFound("Image not found");
+            }
+
+            var images = new List<byte[]>
+            {
+                Encoding.ASCII.GetBytes(gameVariant.Image),
+                Encoding.ASCII.GetBytes(gameVariant.HoverImage ?? gameVariant.Image)
+            };
+
+            return images;
         }
     }
 }

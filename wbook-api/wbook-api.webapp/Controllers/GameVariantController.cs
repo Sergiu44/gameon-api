@@ -1,5 +1,4 @@
-﻿using Infrastructure.Common.Base;
-using Infrastructure.Models.Game;
+﻿using Infrastructure.Models.Game;
 using Infrastructure.Models.GameVariant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -17,14 +16,6 @@ namespace wbook_api.webapp.Controllers
             _gameVariantService = gameVariantService;
         }
 
-        [HttpGet("get")]
-        [Authorize]
-        public async Task<IActionResult> GetGameVariants([FromRoute] int gameId)
-        {
-            var variants = await _gameVariantService.GetGameVariants(gameId);
-            return Ok(variants);
-        }
-
         [HttpPost("post")]
         public IActionResult PostVariantToGame([FromForm] GameVariantPostModel model)
         {
@@ -32,11 +23,32 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
-        [HttpPost("delete")]
-        public IActionResult DeleteVariant([FromBody] int gameId)
+        [HttpPut("put/{gameVariantId}")]
+        public IActionResult PutVariantGame([FromForm] GameVariantEditModel model, [FromRoute] int gameVariantId)
         {
-            _gameVariantService.DeleteVariant(gameId);
+            _gameVariantService.EditVariant(model, gameVariantId);
             return Ok();
+        }
+
+        [HttpPost("delete/{gameVariantId}")]
+        public IActionResult DeleteVariant([FromRoute] int gameVariantId)
+        {
+            _gameVariantService.DeleteVariant(gameVariantId);
+            return Ok();
+        }
+
+        [HttpGet("image")]
+        public IActionResult GetVariantImg(int gameVariantId)
+        {
+            var model = _gameVariantService.GetImg(gameVariantId);
+
+            var images = new List<FileContentResult>
+            {
+                File(model[0], "image/jpg"),
+                File(model[1], "image/jpg")
+            };
+
+            return Ok(images);
         }
     }
 }

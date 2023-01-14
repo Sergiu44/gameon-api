@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Models.GameVariant;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,13 +10,12 @@ namespace Infrastructure.Models.Game
 {
     public class GamePostModel
     {
-        public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string? Image { get; set; }
-        public string? HoverImage{ get; set; }
-        public int Price { get; set; }
-        public int Rrp { get; set; }
+        public IFormFile Image { get; set; }
+        public IFormFile? HoverImage{ get; set; }
+        public double Price { get; set; }
+        public double? Rrp { get; set; }
         public string Type { get; set; }
     }
 }

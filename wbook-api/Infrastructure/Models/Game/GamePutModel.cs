@@ -1,15 +1,9 @@
 ﻿using Microsoft.AspNetCore.Http;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace Infrastructure.Models.GameVariant
+namespace Infrastructure.Models.Game
 {
-    public class GameVariantPostModel
+    public class GamePutModel
     {
-        public int GameId { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
         public double Price { get; set; }
