@@ -14,8 +14,8 @@ namespace Infrastructure.Models.Bundle
         public string Title { get; set; }
         public string Description { get; set; }
         public string Image { get; set; }
-        public int Price { get; set; }
-        public int? Rrp { get; set; }
+        public double Price { get; set; }
+        public double? Rrp { get; set; }
         public List<Tuple<GameVariantItemModel, GameModel>> GameVariants { get; set; }
     }
 }

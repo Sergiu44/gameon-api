@@ -1,5 +1,4 @@
-﻿using Infrastructure.Common.Base;
-using Microsoft.AspNetCore.Authorization;
+﻿using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -11,7 +10,7 @@ namespace wbook_api.webapp.Controllers
     {
         private readonly BasketService _basketService;
 
-        public BasketController(ControllerDependencies dependencies, BasketService basketService)
+        public BasketController(BasketService basketService)
         {
             _basketService = basketService;
         }

@@ -1,6 +1,4 @@
-﻿using Infrastructure.Common.Base;
-using Infrastructure.Entities;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Services;
 
 namespace wbook_api.webapp.Controllers
@@ -11,7 +9,7 @@ namespace wbook_api.webapp.Controllers
     {
         private readonly WishlistService _wishlistService;
 
-        public WishlistController(ControllerDependencies dependencies, WishlistService wishlistService)
+        public WishlistController(WishlistService wishlistService)
         {
             _wishlistService= wishlistService;
         }

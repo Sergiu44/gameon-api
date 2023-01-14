@@ -20,6 +20,7 @@ namespace Infrastructure.Context
         public virtual DbSet<BasketItem> BasketItems { get; set; } = null!;
         public virtual DbSet<Bundle> Bundles { get; set; } = null!;
         public virtual DbSet<BundleGameMapping> BundleGameMappings { get; set; } = null!;
+        public virtual DbSet<Category> Categories { get; set; } = null!;
         public virtual DbSet<Game> Games { get; set; } = null!;
         public virtual DbSet<GameVariant> GameVariants { get; set; } = null!;
         public virtual DbSet<User> Users { get; set; } = null!;
@@ -122,6 +123,20 @@ namespace Infrastructure.Context
                     .HasConstraintName("FK_BundleGameMapping_GameVariant");
             });
 
+            modelBuilder.Entity<Category>(entity =>
+            {
+                entity.ToTable("Category");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.CategoryName)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("category_name");
+            });
+
             modelBuilder.Entity<Game>(entity =>
             {
                 entity.ToTable("Game");
@@ -193,7 +208,6 @@ namespace Infrastructure.Context
                 entity.HasOne(d => d.Game)
                     .WithMany(p => p.GameVariants)
                     .HasForeignKey(d => d.GameId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_cheapestVariantId");
             });
 

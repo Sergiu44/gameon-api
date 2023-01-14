@@ -40,7 +40,8 @@ namespace Infrastructure
 
         public IRepository<BundleGameMapping> bundleGameMapping;
         public IRepository<BundleGameMapping> BundleGameMapping => bundleGameMapping ?? (bundleGameMapping = new BaseRepository<BundleGameMapping>(Context));
-
+        public IRepository<Category> categories;
+        public IRepository<Category> Categories => categories ?? (categories = new BaseRepository<Category>(Context));
         public void SaveChanges()
         {
             Context.SaveChanges();

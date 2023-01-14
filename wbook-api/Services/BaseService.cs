@@ -8,11 +8,9 @@ namespace Services
     {
 
         protected readonly UnitOfWork _unitOfWork;
-        protected readonly IMapper mapper;
         public BaseService(ServiceDependencies serviceDependencies)
         {
             _unitOfWork = serviceDependencies.UnitOfWork;
-            mapper = serviceDependencies.Mapper;
         }
 
         protected TResult ExecuteInTransaction<TResult>(Func<UnitOfWork, TResult> func)

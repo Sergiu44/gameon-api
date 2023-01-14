@@ -1,5 +1,4 @@
-﻿using Infrastructure.Common.DTOs;
-using Infrastructure.Models.User;
+﻿using Infrastructure.Models.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Services;
@@ -69,7 +68,7 @@ namespace wbook_api.webapp.Controllers
 
 
 
-        private JwtSecurityToken LogIn(CurrentUserDto userDto)
+        private JwtSecurityToken LogIn(UserModel userDto)
         {
             var claims = new List<Claim>
             {
