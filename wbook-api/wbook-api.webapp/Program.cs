@@ -28,6 +28,8 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GameService>();
 builder.Services.AddScoped<GameVariantService>();
 builder.Services.AddScoped<BundleService>();
+builder.Services.AddScoped<BasketService>();
+builder.Services.AddScoped<WishlistService>();
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 builder.Services.AddEndpointsApiExplorer();

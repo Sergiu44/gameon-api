@@ -5,6 +5,12 @@ namespace Infrastructure.Entities
 {
     public partial class User : IEntity
     {
+        public User()
+        {
+            BasketItems = new HashSet<BasketItem>();
+            WishlistItems = new HashSet<WishlistItem>();
+        }
+
         public int Id { get; set; }
         public string FirstName { get; set; } = null!;
         public string LastName { get; set; } = null!;
@@ -22,5 +28,8 @@ namespace Infrastructure.Entities
         public DateTime DateOfBirth { get; set; }
         public bool IsAdmin { get; set; }
         public bool IsDeleted { get; set; }
+
+        public virtual ICollection<BasketItem> BasketItems { get; set; }
+        public virtual ICollection<WishlistItem> WishlistItems { get; set; }
     }
 }

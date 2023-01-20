@@ -1,7 +1,6 @@
 ﻿using Infrastructure;
 using Infrastructure.Common.Exceptions;
 using Infrastructure.Entities;
-using Infrastructure.Models.Game;
 using Infrastructure.Models.GameVariant;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -19,6 +18,32 @@ namespace Services
         public int createGameVariantId()
         {
             return _unitOfWork.GameVariants.Get().ToList().Count + 1;
+        }
+
+        public async Task<List<GameVariantItemModel>> GetVariants()
+        {
+            var variantsList = new List<GameVariantItemModel>();
+            var listOfVariants = await _unitOfWork.GameVariants.Get().OrderBy(x => x.Title).ToListAsync();
+
+            if(listOfVariants == null)
+            {
+                return variantsList;
+            }
+
+            foreach(var variant in listOfVariants)
+            {
+                var variantModel = new GameVariantItemModel()
+                {
+                    Title = variant.Title,
+                    Description = variant.Description,
+                    Price = variant.Price,
+                    Rrp = variant.Rrp,
+                    GameId = variant.GameId,
+                };
+                variantsList.Add(variantModel);
+            }
+
+            return variantsList;
         }
 
         public void AddVariant(GameVariantPostModel variantPostModel)

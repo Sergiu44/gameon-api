@@ -1,5 +1,4 @@
-﻿using Infrastructure.Models.Game;
-using Infrastructure.Models.GameVariant;
+﻿using Infrastructure.Models.GameVariant;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -13,9 +12,8 @@ namespace Infrastructure.Models.Bundle
         public int Id { get; set; }
         public string Title { get; set; }
         public string Description { get; set; }
-        public string Image { get; set; }
+        public byte[] Image { get; set; }
         public double Price { get; set; }
         public double? Rrp { get; set; }
-        public List<Tuple<GameVariantItemModel, GameModel>> GameVariants { get; set; }
     }
 }

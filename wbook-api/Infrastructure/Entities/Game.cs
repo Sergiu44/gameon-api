@@ -15,8 +15,8 @@ namespace Infrastructure.Entities
         public string Description { get; set; } = null!;
         public double Price { get; set; }
         public double? Rrp { get; set; }
-        public string Image { get; set; } = null!;
-        public string? HoverImage { get; set; }
+        public byte[] Image { get; set; } = null!;
+        public byte[]? HoverImage { get; set; }
         public string? Category { get; set; }
         public DateTime CreatedAt { get; set; }
 

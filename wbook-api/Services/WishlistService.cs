@@ -14,9 +14,9 @@ namespace Services
     {
         public WishlistService(ServiceDependencies dependencies) : base(dependencies) { }
 
-        public async Task<List<Tuple<GameVariantItemModel, BundleItemModel>>> GetVariantsForWishlist(int userId)
+        public async Task<List<Tuple<GameVariantItemModel, BundleGamesModel>>> GetVariantsForWishlist(int userId)
         {
-            var variantsList = new List<Tuple<GameVariantItemModel, BundleItemModel>>();
+            var variantsList = new List<Tuple<GameVariantItemModel, BundleGamesModel>>();
 
             var listOfVariants = 
                 await _unitOfWork.WishlistItems.Get()
@@ -38,31 +38,28 @@ namespace Services
                         Id = (int)variant.IdVariant,
                         Title = variant.IdVariantNavigation.Title,
                         Description = variant.IdVariantNavigation.Description,
-                        Image = variant.IdVariantNavigation.Image,
-                        HoverImage = variant.IdVariantNavigation.HoverImage,
                         Price = variant.IdVariantNavigation.Price,
                         Rrp = variant.IdVariantNavigation.Rrp ?? variant.IdVariantNavigation.Price,
                     };
-                    variantsList.Add(Tuple.Create<GameVariantItemModel, BundleItemModel>(variantModel, null));
+                    variantsList.Add(Tuple.Create<GameVariantItemModel, BundleGamesModel>(variantModel, null));
                 } else if(variant.IdBundle!= null)
                 {
-                    var bundleModel = new BundleItemModel()
+                    var bundleModel = new BundleGamesModel()
                     {
                         Id = (int)variant.IdBundle,
                         Title = variant.IdBundleNavigation.Title,
                         Description = variant.IdBundleNavigation.Description,
-                        Image = variant.IdBundleNavigation.Image,
                         Price = variant.IdBundleNavigation.Price,
                         Rrp = variant.IdBundleNavigation.Rrp ?? variant.IdBundleNavigation.Price,
                     };
-                    variantsList.Add(Tuple.Create<GameVariantItemModel, BundleItemModel>(null, bundleModel));
+                    variantsList.Add(Tuple.Create<GameVariantItemModel, BundleGamesModel>(null, bundleModel));
                 }
             }
 
             return variantsList;
         }
 
-        public void AddProductToWishlist(int idProduct)
+        public void AddProductToWishlist(int userId, int idProduct)
         {
             var wishlistItem = new WishlistItem();
             var product = _unitOfWork.GameVariants.Get().FirstOrDefault(v => v.Id == idProduct);
@@ -70,6 +67,8 @@ namespace Services
 
             if(product != null) 
             {
+                wishlistItem.IdUser = userId;
+                wishlistItem.IdUserNavigation = _unitOfWork.Users.Get().First(u => u.Id == userId);
                 wishlistItem.IdVariant = product.Id;
                 wishlistItem.IdVariantNavigation = product;
                 wishlistItem.IdBundle = null;
@@ -77,6 +76,8 @@ namespace Services
                 _unitOfWork.WishlistItems.Insert(wishlistItem);
             } else if(bundle != null)
             {
+                wishlistItem.IdUser = userId;
+                wishlistItem.IdUserNavigation = _unitOfWork.Users.Get().First(u => u.Id == userId);
                 wishlistItem.IdVariant = null;
                 wishlistItem.IdVariantNavigation = null;
                 wishlistItem.IdBundle = bundle.Id;
@@ -88,10 +89,10 @@ namespace Services
 
         }
 
-        public void DeleteProductFromWishlist(int idProduct)
+        public void DeleteProductFromWishlist(int userId, int idProduct)
         {
-            var product = _unitOfWork.WishlistItems.Get().FirstOrDefault(v => v.IdVariant== idProduct);
-            var bundle = _unitOfWork.WishlistItems.Get().FirstOrDefault(b => b.IdBundle == idProduct);
+            var product = _unitOfWork.WishlistItems.Get().FirstOrDefault(v => v.IdVariant== idProduct && v.IdUser == userId);
+            var bundle = _unitOfWork.WishlistItems.Get().FirstOrDefault(b => b.IdBundle == idProduct && b.IdUser == userId);
 
             if (product != null)
             {

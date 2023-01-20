@@ -11,10 +11,15 @@ namespace Services
 
         public BasketService(ServiceDependencies dependencies) : base(dependencies) { }
 
+        private int getBasketCount()
+        {
+            return _unitOfWork.BasketItems.Get().Count() + 1; 
+        }
+
         public async Task<List<Tuple<GameVariantItemModel, BundleItemModel>>> GetVariantsForBasket(int userId)
         {
             var variantsList = new List<Tuple<GameVariantItemModel, BundleItemModel>>();
-
+            
             var listOfVariants =
                 await _unitOfWork.BasketItems.Get()
                                         .Include(v => v.IdVariantNavigation)
@@ -35,8 +40,6 @@ namespace Services
                         Id = (int)variant.IdVariant,
                         Title = variant.IdVariantNavigation.Title,
                         Description = variant.IdVariantNavigation.Description,
-                        Image = variant.IdVariantNavigation.Image,
-                        HoverImage = variant.IdVariantNavigation.HoverImage,
                         Price = variant.IdVariantNavigation.Price,
                         Rrp = variant.IdVariantNavigation.Rrp ?? variant.IdVariantNavigation.Price,
                     };
@@ -49,7 +52,6 @@ namespace Services
                         Id = (int)variant.IdBundle,
                         Title = variant.IdBundleNavigation.Title,
                         Description = variant.IdBundleNavigation.Description,
-                        Image = variant.IdBundleNavigation.Image,
                         Price = variant.IdBundleNavigation.Price,
                         Rrp = variant.IdBundleNavigation.Rrp ?? variant.IdBundleNavigation.Price,
                     };
@@ -63,6 +65,7 @@ namespace Services
         public void AddProductToBasket(int userId, int idProduct)
         {
             var basketItem = new BasketItem();
+            basketItem.Id = getBasketCount();
             var product = _unitOfWork.GameVariants.Get().FirstOrDefault(v => v.Id == idProduct);
             var bundle = _unitOfWork.Bundles.Get().FirstOrDefault(b => b.Id == idProduct);
 
@@ -91,10 +94,10 @@ namespace Services
 
         }
 
-        public void DeleteProductFromBasket(int idProduct)
+        public void DeleteProductFromBasket(int userId, int idProduct)
         {
-            var product = _unitOfWork.BasketItems.Get().FirstOrDefault(v => v.IdVariant == idProduct);
-            var bundle = _unitOfWork.BasketItems.Get().FirstOrDefault(b => b.IdBundle == idProduct);
+            var product = _unitOfWork.BasketItems.Get().FirstOrDefault(v => v.IdVariant == idProduct && v.IdUser == userId);
+            var bundle = _unitOfWork.BasketItems.Get().FirstOrDefault(b => b.IdBundle == idProduct && b.IdUser == userId);
 
             if (product != null)
             {

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace Infrastructure.Models.Game
+namespace Infrastructure.Models.GameVariant
 {
     public class GameVariantEditModel
     {

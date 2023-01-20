@@ -15,8 +15,6 @@ namespace Infrastructure.Models.GameVariant
         public string Description { get; set; }
         public double Price { get; set; }
         public double? Rrp { get; set; }
-        public string Image { get; set; }
-        public string? HoverImage { get; set; }
-
+        public List<GameVariantItemModel> GameVariants { get; set; }
     }
 }

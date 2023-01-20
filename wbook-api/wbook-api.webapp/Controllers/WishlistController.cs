@@ -24,14 +24,16 @@ namespace wbook_api.webapp.Controllers
         [HttpPost("post")]
         public IActionResult PostItemInWishlist([FromBody] int id)
         {
-            _wishlistService.AddProductToWishlist(id);
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _wishlistService.AddProductToWishlist(userId, id);
             return Ok();
         }
 
         [HttpDelete("delete")]
         public IActionResult DeleteItemFromWishlist([FromBody] int id)
         {
-            _wishlistService.DeleteProductFromWishlist(id);
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _wishlistService.DeleteProductFromWishlist(userId, id);
             return Ok();
         }
     }

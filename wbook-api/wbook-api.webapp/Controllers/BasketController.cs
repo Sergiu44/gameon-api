@@ -16,7 +16,6 @@ namespace wbook_api.webapp.Controllers
         }
 
         [HttpGet("get")]
-        [Authorize]
         public async Task<IActionResult> GetBasket()
         {
             var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
@@ -24,19 +23,19 @@ namespace wbook_api.webapp.Controllers
             return Ok(basketItems);
         }
 
-        [HttpPost("post")]
-        [Authorize]
-        public IActionResult PostItemInBasket([FromBody] int itemId)
+        [HttpPost("post/{itemId}")]
+        public IActionResult PostItemInBasket([FromRoute] int itemId)
         {
             var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
             _basketService.AddProductToBasket(userId, itemId);
             return Ok();
         }
 
-        [HttpDelete("delete")]
-        public IActionResult DeleteItemFromBasket([FromBody] int id)
+        [HttpDelete("delete/{id}")]
+        public IActionResult DeleteItemFromBasket([FromRoute] int id)
         {
-            _basketService.DeleteProductFromBasket(id);
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _basketService.DeleteProductFromBasket(userId, id);
             return Ok();
         }
     }

@@ -39,8 +39,6 @@ namespace Services
                     Id = game.Id,
                     Title = game.Title,
                     Description = game.Description,
-                    Image = game.Image,
-                    HoverImage = game.HoverImage,
                     Price = game.Price,
                     Rrp = game.Rrp ?? game.Price,
 
@@ -70,21 +68,23 @@ namespace Services
             var images = GetImg(game.Id);
             gameToSent.Image = images[0].ToString() ?? "";
             gameToSent.HoverImage = images[1].ToString();
+            gameToSent.GameVariants = new List<GameVariantItemModel>();
 
-            foreach (var gameVariant in game.GameVariants)
+            if (game.GameVariants != null)
             {
-                var newGameVar = new GameVariantItemModel();
-                newGameVar.Id = gameVariant.Id;
-                newGameVar.GameId = gameVariant.GameId;
-                newGameVar.Title = gameVariant.Title;
-                newGameVar.Description = gameVariant.Description;
-                newGameVar.Price = gameVariant.Price;
-                newGameVar.Rrp = gameVariant.Rrp;
-                var variantImages = GetVariantImg(gameVariant.Id);
-                newGameVar.Image = variantImages[0].ToString() ?? "";
-                newGameVar.HoverImage = variantImages[1].ToString() ?? "";
+                foreach (var gameVariant in game.GameVariants)
+                {
+                    var newGameVar = new GameVariantItemModel();
+                    newGameVar.Id = gameVariant.Id;
+                    newGameVar.GameId = gameVariant.GameId;
+                    newGameVar.Title = gameVariant.Title;
+                    newGameVar.Description = gameVariant.Description;
+                    newGameVar.Price = gameVariant.Price;
+                    newGameVar.Rrp = gameVariant.Rrp;
+                    var variantImages = GetVariantImg(gameVariant.Id);
 
-                gameToSent.GameVariants.Add(newGameVar);
+                    gameToSent.GameVariants.Add(newGameVar);
+                }
             }
             return gameToSent;
         }
@@ -102,14 +102,14 @@ namespace Services
                     {
                         game.HoverImage.CopyTo(ms);
                         var fileBytes = ms.ToArray();
-                        newGame.HoverImage = fileBytes.ToString();
+                        newGame.HoverImage = fileBytes;
                     }
                 }
                 using (var ms = new MemoryStream())
                 {
                     game.Image.CopyTo(ms);
                     var fileBytes = ms.ToArray();
-                    newGame.Image = fileBytes.ToString() ?? "";
+                    newGame.Image = fileBytes;
                 }
                 newGame.Price = game.Price;
                 newGame.Rrp = game.Rrp;
@@ -139,7 +139,8 @@ namespace Services
                 {
                     game.HoverImage.CopyTo(ms);
                     var fileBytes = ms.ToArray();
-                    gameById.HoverImage = fileBytes.ToString();
+                    gameById.HoverImage = fileBytes;
+                    ;
                 }
             }
             
@@ -147,7 +148,7 @@ namespace Services
             {
                 game.Image.CopyTo(ms);
                 var fileBytes = ms.ToArray();
-                gameById.Image = fileBytes.ToString() ?? "";
+                gameById.Image = fileBytes;
             }
             _unitOfWork.Games.Update(gameById);
             _unitOfWork.SaveChanges();
@@ -165,7 +166,7 @@ namespace Services
             _unitOfWork.SaveChanges();
         }
 
-        public List<byte[]> GetImg(int id)
+        public byte[] GetImg(int id)
         {
             var game = _unitOfWork.Games.Get().FirstOrDefault(i => i.Id == id);
             if (game == null)
@@ -173,13 +174,7 @@ namespace Services
                 throw new NotFound("Image not found");
             }
 
-            var images = new List<byte[]>
-            {
-                Encoding.ASCII.GetBytes(game.Image),
-                Encoding.ASCII.GetBytes(game.HoverImage ?? game.Image)
-            };
-
-            return images;
+            return game.Image;
         }
 
         public List<byte[]> GetVariantImg(int id)

@@ -1,5 +1,4 @@
-﻿using Infrastructure.Models.Game;
-using Infrastructure.Models.GameVariant;
+﻿using Infrastructure.Models.GameVariant;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
@@ -14,6 +13,13 @@ namespace wbook_api.webapp.Controllers
         public GameVariantController(GameVariantService gameVariantService)
         {
             _gameVariantService = gameVariantService;
+        }
+
+        [HttpGet("get")]
+        public async Task<IActionResult> GetVariants()
+        {
+            var variants = await _gameVariantService.GetVariants();
+            return Ok(variants);
         }
 
         [HttpPost("post")]

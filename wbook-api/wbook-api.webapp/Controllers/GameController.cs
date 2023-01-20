@@ -50,18 +50,12 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
-        [HttpGet("image")]
-        public IActionResult GetImg(int gameId)
+        [HttpGet("image/{gameId}")]
+        public IActionResult GetImg([FromRoute] int gameId)
         {
             var model = _gameService.GetImg(gameId);
 
-            var images = new List<FileContentResult>
-            {
-                File(model[0], "image/jpg"),
-                File(model[1], "image/jpg")
-            };
-
-            return Ok(images);
+            return File(model, "image/jpg");
         }
     }
 }

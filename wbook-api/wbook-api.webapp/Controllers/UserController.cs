@@ -1,4 +1,5 @@
-﻿using Infrastructure.Models.User;
+﻿using Infrastructure.Entities;
+using Infrastructure.Models.User;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Services;
@@ -19,6 +20,45 @@ namespace wbook_api.webapp.Controllers
         {
             _userService = userService;
             _configuration = configuration;
+        }
+
+        [HttpGet("get")]
+        public async Task<IActionResult> GetUsers()
+        {
+            var id = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            var users = await _userService.GetUsers(id);
+            return Ok(users);
+        }
+
+        [HttpGet("getCurrentUser")]
+        public async Task<IActionResult> GetCurrentUser()
+        {
+            var id = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            var user = await _userService.GetCurrentUser(id);
+            return Ok(user);
+        }
+
+        [HttpPut("put/password")]
+        public IActionResult PutPasswordUser([FromBody] UserPasswordModel user)
+        {
+            var id = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _userService.PutChangePasswordUser(id, user);
+            return Ok();
+        }
+
+        [HttpPut("put")]
+        public IActionResult PutCurrentUSer([FromBody] UserPutModel user)
+        {
+            var id = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _userService.PutCurrentUser(id, user);
+            return Ok();
+        }
+
+        [HttpDelete("delete/{id}")]
+        public IActionResult DeleteUser([FromRoute] int id)
+        {
+            _userService.DeleteUser(id);
+            return Ok();
         }
 
         [HttpPost("register")]
