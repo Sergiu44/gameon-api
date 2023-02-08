@@ -67,14 +67,14 @@ namespace Services
                 {
                     variantPostModel.HoverImage.CopyTo(ms);
                     var fileBytes = ms.ToArray();
-                    newVariant.HoverImage = fileBytes.ToString();
+                    newVariant.HoverImage = fileBytes;
                 }
             }
             using (var ms = new MemoryStream())
             {
                 variantPostModel.Image.CopyTo(ms);
                 var fileBytes = ms.ToArray();
-                newVariant.Image = fileBytes.ToString() ?? "";
+                newVariant.Image = fileBytes;
             }
             _unitOfWork.GameVariants.Insert(newVariant);
             _unitOfWork.SaveChanges();
@@ -105,7 +105,7 @@ namespace Services
                 {
                     variant.HoverImage.CopyTo(ms);
                     var fileBytes = ms.ToArray();
-                    variantById.HoverImage = fileBytes.ToString();
+                    variantById.HoverImage = fileBytes;
                 }
             }
             if(variant.Image != null)
@@ -114,7 +114,7 @@ namespace Services
                 {
                     variant.Image.CopyTo(ms);
                     var fileBytes = ms.ToArray();
-                    variantById.Image = fileBytes.ToString() ?? "";
+                    variantById.Image = fileBytes;
                 }
             }
             _unitOfWork.GameVariants.Update(variantById);
@@ -132,21 +132,26 @@ namespace Services
             _unitOfWork.SaveChanges();
         }
 
-        public List<byte[]> GetImg(int id)
+        public byte[] GetImg(int id)
         {
-            var gameVariant = _unitOfWork.GameVariants.Get().FirstOrDefault(i => i.Id == id);
-            if (gameVariant == null)
+            var game = _unitOfWork.GameVariants.Get().FirstOrDefault(i => i.Id == id);
+            if (game == null)
             {
                 throw new NotFound("Image not found");
             }
 
-            var images = new List<byte[]>
-            {
-                Encoding.ASCII.GetBytes(gameVariant.Image),
-                Encoding.ASCII.GetBytes(gameVariant.HoverImage ?? gameVariant.Image)
-            };
+            return game.Image;
+        }
 
-            return images;
+        public byte[] GetHoverImg(int id)
+        {
+            var game = _unitOfWork.GameVariants.Get().FirstOrDefault(i => i.Id == id);
+            if (game == null)
+            {
+                throw new NotFound("Image not found");
+            }
+
+            return game.HoverImage ?? game.Image;
         }
     }
 }

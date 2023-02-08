@@ -1,4 +1,5 @@
 ﻿using Infrastructure.Models.Bundle;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Services;
 
@@ -17,7 +18,7 @@ namespace wbook_api.webapp.Controllers
         [HttpGet("get")]
         public async Task<IActionResult> GetBundles()
         {
-            var bundles = _bundleService.GetBundles();
+            var bundles = await _bundleService.GetBundles();
             return Ok(bundles);
         }
 
@@ -28,6 +29,7 @@ namespace wbook_api.webapp.Controllers
             return Ok(bundle);
         }
 
+        [Authorize]
         [HttpPost("post")]
         public async Task<IActionResult> PostBundle([FromForm] BundlePostModel bundle)
         {
@@ -35,6 +37,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("{bundleId}/post/{gameId}")]
         public IActionResult PostToBundle([FromRoute] int bundleId, [FromRoute] int gameId)
         {
@@ -42,6 +45,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("{bundleId}/delete/{gameId}")]
         public IActionResult DeleteFromBundle([FromRoute] int bundleId, [FromRoute] int gameId)
         {
@@ -49,6 +53,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("delete/{bundleId}")]
         public IActionResult DeleteBundle([FromRoute] int bundleId)
         {
@@ -56,8 +61,8 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
-        [HttpGet("image")]
-        public IActionResult GetImg(int bundleId)
+        [HttpGet("image/{bundleId}")]
+        public IActionResult GetImg([FromRoute] int bundleId)
         {
             var model = _bundleService.GetImg(bundleId);
 

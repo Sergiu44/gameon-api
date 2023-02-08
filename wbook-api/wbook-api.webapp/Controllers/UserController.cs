@@ -6,6 +6,7 @@ using Services;
 using System.IdentityModel.Tokens.Jwt;
 using System.Security.Claims;
 using System.Text;
+using wbook_api.WebApp.Code.Utils;
 
 namespace wbook_api.webapp.Controllers
 {
@@ -22,6 +23,7 @@ namespace wbook_api.webapp.Controllers
             _configuration = configuration;
         }
 
+        [Authorize]
         [HttpGet("get")]
         public async Task<IActionResult> GetUsers()
         {
@@ -54,6 +56,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("delete/{id}")]
         public IActionResult DeleteUser([FromRoute] int id)
         {
@@ -80,7 +83,8 @@ namespace wbook_api.webapp.Controllers
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo,
                 firstName = user.FirstName,
-                lastName = user.LastName
+                lastName = user.LastName,
+                isAdmin = user.IsAdmin
             });
         }
 
@@ -102,7 +106,8 @@ namespace wbook_api.webapp.Controllers
                 token = new JwtSecurityTokenHandler().WriteToken(token),
                 expiration = token.ValidTo,
                 firstName = user.FirstName,
-                lastName = user.LastName
+                lastName = user.LastName,
+                isAdmin = user.IsAdmin
             });
         }
 

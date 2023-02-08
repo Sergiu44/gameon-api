@@ -23,19 +23,35 @@ namespace wbook_api.webapp.Controllers
             return Ok(basketItems);
         }
 
-        [HttpPost("post/{itemId}")]
-        public IActionResult PostItemInBasket([FromRoute] int itemId)
+        [HttpPost("post/variant/{itemId}")]
+        public IActionResult PostVariantInBasket([FromRoute] int itemId)
         {
             var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
-            _basketService.AddProductToBasket(userId, itemId);
+            _basketService.AddProductToBasket(userId, itemId, true);
             return Ok();
         }
 
-        [HttpDelete("delete/{id}")]
-        public IActionResult DeleteItemFromBasket([FromRoute] int id)
+        [HttpPost("post/bundle/{itemId}")]
+        public IActionResult PostBundleInBasket([FromRoute] int itemId)
         {
             var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
-            _basketService.DeleteProductFromBasket(userId, id);
+            _basketService.AddProductToBasket(userId, itemId, false);
+            return Ok();
+        }
+
+        [HttpDelete("delete/variant/{id}")]
+        public IActionResult DeleteVariantFromBasket([FromRoute] int id)
+        {
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _basketService.DeleteProductFromBasket(userId, id, true);
+            return Ok();
+        }
+
+        [HttpDelete("delete/bundle/{id}")]
+        public IActionResult DeleteBundleFromBasket([FromRoute] int id)
+        {
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _basketService.DeleteProductFromBasket(userId, id, false);
             return Ok();
         }
     }

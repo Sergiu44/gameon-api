@@ -53,20 +53,24 @@ namespace Services
         public void PutChangePasswordUser(int id, UserPasswordModel user)
         {
             var userToChange = _unitOfWork.Users.Get().FirstOrDefault(u => u.Id == id);
-            byte[] password = Encoding.ASCII.GetBytes(user.CurrentPassword);
-            byte[] newPassword = Encoding.ASCII.GetBytes(user.NewPassword);
 
-            if (userToChange.Password.Take(user.CurrentPassword.Length) != password)
+            if(userToChange == null)
+            {
+                throw new NotFound("User not found!");
+            }
 
+            var oldPassword = user.CurrentPassword.HashPassword(userToChange.Salt);
+
+            if(!oldPassword.SequenceEqual(userToChange.Password))
             {
-                throw new Exception("The current password is not good");
-            }
-            if (user.NewPassword != null)
+                throw new NotFound("Password not good");
+            } else
             {
-                userToChange.Password = newPassword;
+                var newPasswordHash = user.NewPassword.HashPassword(userToChange.Salt);
+                userToChange.Password= newPasswordHash;
+                _unitOfWork.Users.Update(userToChange);
+                _unitOfWork.SaveChanges();
             }
-            _unitOfWork.Users.Update(userToChange);
-            _unitOfWork.SaveChanges();
         }
         public void PutCurrentUser(int id, UserPutModel user)
         {

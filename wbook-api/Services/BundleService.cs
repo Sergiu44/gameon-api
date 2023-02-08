@@ -35,7 +35,6 @@ namespace Services
                     Description = bundle.Description,
                     Price = bundle.Price,
                     Rrp = bundle.Rrp ?? bundle.Price,
-                    Image = bundle.Image
                 };
                 bundlesList.Add(bundleModel);
             }

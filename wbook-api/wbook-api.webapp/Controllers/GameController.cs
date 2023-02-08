@@ -29,6 +29,7 @@ namespace wbook_api.webapp.Controllers
             return Ok(game);
         }
 
+        [Authorize]
         [HttpPost("post")]
         public async Task<IActionResult> PostGame([FromForm] GamePostModel model)
         {
@@ -36,6 +37,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPut("put/{gameId}")]
         public IActionResult PutGame([FromForm] GamePutModel model, [FromRoute] int gameId)
         {
@@ -43,6 +45,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpDelete("delete/{gameId}")]
         public IActionResult DeleteGame([FromRoute] int gameId)
         {
@@ -54,6 +57,14 @@ namespace wbook_api.webapp.Controllers
         public IActionResult GetImg([FromRoute] int gameId)
         {
             var model = _gameService.GetImg(gameId);
+
+            return File(model, "image/jpg");
+        }
+
+        [HttpGet("hoverImage/{gameId}")]
+        public IActionResult GetHoverImg([FromRoute] int gameId)
+        {
+            var model = _gameService.GetHoverImg(gameId);
 
             return File(model, "image/jpg");
         }

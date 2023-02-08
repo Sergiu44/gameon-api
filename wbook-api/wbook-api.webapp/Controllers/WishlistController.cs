@@ -15,25 +15,42 @@ namespace wbook_api.webapp.Controllers
         }
 
         [HttpGet("get")]
-        public async Task<IActionResult> GetWishlist([FromBody] int userId)
+        public async Task<IActionResult> GetWishlist()
         {
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
             var wishlistItems = await _wishlistService.GetVariantsForWishlist(userId);
             return Ok(wishlistItems);
         }
 
-        [HttpPost("post")]
-        public IActionResult PostItemInWishlist([FromBody] int id)
+        [HttpPost("post/variant/{itemId}")]
+        public IActionResult PostVariantInWishlist([FromRoute] int itemId)
         {
             var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
-            _wishlistService.AddProductToWishlist(userId, id);
+            _wishlistService.AddProductToWishlist(userId, itemId, true);
             return Ok();
         }
 
-        [HttpDelete("delete")]
-        public IActionResult DeleteItemFromWishlist([FromBody] int id)
+        [HttpPost("post/bundle/{itemId}")]
+        public IActionResult PostBundleInWishlist([FromRoute] int itemId)
         {
             var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
-            _wishlistService.DeleteProductFromWishlist(userId, id);
+            _wishlistService.AddProductToWishlist(userId, itemId, false);
+            return Ok();
+        }
+
+        [HttpDelete("delete/variant/{id}")]
+        public IActionResult DeleteItemFromWishlist([FromRoute] int id)
+        {
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _wishlistService.DeleteProductFromWishlist(userId, id, true);
+            return Ok();
+        }
+
+        [HttpDelete("delete/bundle/{id}")]
+        public IActionResult DeleteBundleFromWishlist([FromRoute] int id)
+        {
+            var userId = Int32.Parse(HttpContext.User.Claims.ToList()[0].Value);
+            _wishlistService.DeleteProductFromWishlist(userId, id, false);
             return Ok();
         }
     }

@@ -22,6 +22,7 @@ namespace wbook_api.webapp.Controllers
             return Ok(variants);
         }
 
+        [Authorize]
         [HttpPost("post")]
         public IActionResult PostVariantToGame([FromForm] GameVariantPostModel model)
         {
@@ -29,6 +30,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPut("put/{gameVariantId}")]
         public IActionResult PutVariantGame([FromForm] GameVariantEditModel model, [FromRoute] int gameVariantId)
         {
@@ -36,6 +38,7 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
+        [Authorize]
         [HttpPost("delete/{gameVariantId}")]
         public IActionResult DeleteVariant([FromRoute] int gameVariantId)
         {
@@ -43,18 +46,20 @@ namespace wbook_api.webapp.Controllers
             return Ok();
         }
 
-        [HttpGet("image")]
-        public IActionResult GetVariantImg(int gameVariantId)
+        [HttpGet("image/{varId}")]
+        public IActionResult GetImg([FromRoute] int varId)
         {
-            var model = _gameVariantService.GetImg(gameVariantId);
+            var model = _gameVariantService.GetImg(varId);
 
-            var images = new List<FileContentResult>
-            {
-                File(model[0], "image/jpg"),
-                File(model[1], "image/jpg")
-            };
+            return File(model, "image/jpg");
+        }
 
-            return Ok(images);
+        [HttpGet("hoverImage/{varId}")]
+        public IActionResult GetHoverImg([FromRoute] int varId)
+        {
+            var model = _gameVariantService.GetHoverImg(varId);
+
+            return File(model, "image/jpg");
         }
     }
 }

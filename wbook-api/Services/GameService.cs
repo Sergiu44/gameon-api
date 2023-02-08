@@ -81,7 +81,6 @@ namespace Services
                     newGameVar.Description = gameVariant.Description;
                     newGameVar.Price = gameVariant.Price;
                     newGameVar.Rrp = gameVariant.Rrp;
-                    var variantImages = GetVariantImg(gameVariant.Id);
 
                     gameToSent.GameVariants.Add(newGameVar);
                 }
@@ -161,6 +160,20 @@ namespace Services
             {
                 throw new NotFound("Game not found");
             }
+            foreach(var variant in game.GameVariants) {
+                var basketItem = _unitOfWork.BasketItems.Get().FirstOrDefault(bi => bi.IdVariant== variant.Id);
+                if (basketItem != null)
+                {
+                    _unitOfWork.BasketItems.Delete(basketItem);
+                }
+
+                var wishlistItem = _unitOfWork.WishlistItems.Get().FirstOrDefault(bi => bi.IdVariant == variant.Id);
+                if (wishlistItem != null)
+                {
+                    _unitOfWork.WishlistItems.Delete(wishlistItem);
+                }
+            }
+            game.GameVariants.Clear();
 
             _unitOfWork.Games.Delete(game);
             _unitOfWork.SaveChanges();
@@ -177,21 +190,15 @@ namespace Services
             return game.Image;
         }
 
-        public List<byte[]> GetVariantImg(int id)
+        public byte[] GetHoverImg(int id)
         {
-            var variant = _unitOfWork.GameVariants.Get().FirstOrDefault(i => i.Id == id);
-            if (variant == null)
+            var game = _unitOfWork.Games.Get().FirstOrDefault(i => i.Id == id);
+            if (game == null)
             {
                 throw new NotFound("Image not found");
             }
 
-            var images = new List<byte[]>
-            {
-                Encoding.ASCII.GetBytes(variant.Image),
-                Encoding.ASCII.GetBytes(variant.HoverImage ?? variant.Image)
-            };
-
-            return images;
+            return game.HoverImage ?? game.Image;
         }
     }
 }

@@ -62,52 +62,58 @@ namespace Services
             return variantsList;
         }
 
-        public void AddProductToBasket(int userId, int idProduct)
+        public void AddProductToBasket(int userId, int idProduct, bool isVariant)
         {
             var basketItem = new BasketItem();
             basketItem.Id = getBasketCount();
-            var product = _unitOfWork.GameVariants.Get().FirstOrDefault(v => v.Id == idProduct);
-            var bundle = _unitOfWork.Bundles.Get().FirstOrDefault(b => b.Id == idProduct);
-
-            if (product != null)
+            if(isVariant == true)
             {
-                basketItem.IdUser = userId;
-                basketItem.IdUserNavigation = _unitOfWork.Users.Get().First(u => u.Id == userId);
-                basketItem.IdVariant = product.Id;
-                basketItem.IdVariantNavigation = product;
-                basketItem.IdBundle = null;
-                basketItem.IdBundleNavigation = null;
-                _unitOfWork.BasketItems.Insert(basketItem);
-            }
-            else if (bundle != null)
+                var product = _unitOfWork.GameVariants.Get().FirstOrDefault(v => v.Id == idProduct);
+                if (product != null)
+                {
+                    basketItem.IdUser = userId;
+                    basketItem.IdUserNavigation = _unitOfWork.Users.Get().First(u => u.Id == userId);
+                    basketItem.IdVariant = product.Id;
+                    basketItem.IdVariantNavigation = product;
+                    basketItem.IdBundle = null;
+                    basketItem.IdBundleNavigation = null;
+                    _unitOfWork.BasketItems.Insert(basketItem);
+                }
+            } else
             {
-                basketItem.IdUser = userId;
-                basketItem.IdUserNavigation = _unitOfWork.Users.Get().First(u => u.Id == userId);
-                basketItem.IdVariant = null;
-                basketItem.IdVariantNavigation = null;
-                basketItem.IdBundle = bundle.Id;
-                basketItem.IdBundleNavigation = bundle;
-                _unitOfWork.BasketItems.Insert(basketItem);
+                var bundle = _unitOfWork.Bundles.Get().FirstOrDefault(b => b.Id == idProduct);
+                if (bundle != null)
+                {
+                    basketItem.IdUser = userId;
+                    basketItem.IdUserNavigation = _unitOfWork.Users.Get().First(u => u.Id == userId);
+                    basketItem.IdVariant = null;
+                    basketItem.IdVariantNavigation = null;
+                    basketItem.IdBundle = bundle.Id;
+                    basketItem.IdBundleNavigation = bundle;
+                    _unitOfWork.BasketItems.Insert(basketItem);
+                }
             }
-
             _unitOfWork.SaveChanges();
 
         }
 
-        public void DeleteProductFromBasket(int userId, int idProduct)
+        public void DeleteProductFromBasket(int userId, int idProduct, bool isVariant)
         {
-            var product = _unitOfWork.BasketItems.Get().FirstOrDefault(v => v.IdVariant == idProduct && v.IdUser == userId);
-            var bundle = _unitOfWork.BasketItems.Get().FirstOrDefault(b => b.IdBundle == idProduct && b.IdUser == userId);
-
-            if (product != null)
+            if(isVariant == true)
             {
-                _unitOfWork.BasketItems.Delete(product);
-            }
-            else if (bundle != null)
+                var product = _unitOfWork.BasketItems.Get().FirstOrDefault(v => v.IdVariant == idProduct && v.IdUser == userId);
+                if (product != null)
+                {
+                    _unitOfWork.BasketItems.Delete(product);
+                }
+            } else
             {
-                _unitOfWork.BasketItems.Delete(bundle);
+                var bundle = _unitOfWork.BasketItems.Get().FirstOrDefault(b => b.IdBundle == idProduct && b.IdUser == userId);
+                if (bundle != null)
+                {
+                    _unitOfWork.BasketItems.Delete(bundle);
+                }
             }
-
             _unitOfWork.SaveChanges();
 
         }
